@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+    rabbitmq:
+        image: heidiks/rabbitmq-delayed-message-exchange:latest
+        container_name: sms-rabbitmq
+        restart: always
+        ports:
+            - "5672:5672"     # для приложений
+            - "15672:15672"   # Web UI
+        environment:
+            RABBITMQ_DEFAULT_USER: sms
+            RABBITMQ_DEFAULT_PASS: sms123
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        networks:
+            - sms_gateway
+
+volumes:
+    rabbitmq_data:
+
+networks:
+    sms_gateway:
+        driver: bridge
