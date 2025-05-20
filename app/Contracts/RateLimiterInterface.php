@@ -4,5 +4,5 @@ namespace App\Contracts;
 
 interface RateLimiterInterface
 {
-    public function isAllowed(string $phone): bool;
+    public function isAllowedForProvider(string $provider): bool;
 }
