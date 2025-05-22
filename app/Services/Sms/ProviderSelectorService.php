@@ -5,6 +5,7 @@ namespace App\Services\Sms;
 use App\Contracts\CircuitBreakerInterface;
 use App\Contracts\ProviderInterface;
 use App\Contracts\ProviderSelectorInterface;
+use App\Models\Provider;
 use Illuminate\Support\Facades\Log;
 
 class ProviderSelectorService implements ProviderSelectorInterface

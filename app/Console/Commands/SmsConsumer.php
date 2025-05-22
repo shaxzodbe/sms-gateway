@@ -5,14 +5,14 @@ namespace App\Console\Commands;
 use App\Services\DispatcherService;
 use Illuminate\Console\Command;
 
-class HighPriorityConsumer extends Command
+class SmsConsumer extends Command
 {
-    protected $signature = 'sms:consume-medium';
-    protected $description = 'Consume medium-priority SMS queue';
+    protected $signature = 'sms:consume';
+    protected $description = 'Consume SMS queue';
 
     public function handle(): void
     {
         $dispatcher = app(DispatcherService::class);
-        $dispatcher->consumeHighPriority();
+        $dispatcher->consume();
     }
 }

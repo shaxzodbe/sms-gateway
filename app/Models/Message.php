@@ -11,9 +11,10 @@ class Message extends Model
     protected $fillable = [
         'batch_id',
         'template_id',
-        'sms_provider_id',
+        'provider_id',
+        'request_id',
         'phone',
-        'message',
+        'text',
         'status',
         'metadata',
         'sent_at',

@@ -1,18 +1,39 @@
 <?php
 
+use App\Services\Sms\Providers\EskizProvider;
+use App\Services\Sms\Providers\GetsmsProvider;
+use App\Services\Sms\Providers\NotifyProvider;
+use App\Services\Sms\Providers\PlaymobileProvider;
+
 return [
     'rate_limiter' => [
-        'limit' => env('SMS_LIMIT_RATE', 1),
-        'window' => env('SMS_LIMIT_WINDOW_SECONDS', 60),
+        'Eskiz' => [
+            'limit' => 5,
+            'window' => 1,
+        ],
+        'Notify' => [
+            'limit' => 5,
+            'window' => 1,
+        ],
+        'Getsms' => [
+            'limit' => 5,
+            'window' => 1,
+        ],
+        'Playmobile' => [
+            'limit' => 5,
+            'window' => 1,
+        ],
     ],
+
     'circuit_breaker' => [
-        'failure_threshold' => env('CB_FAILURE_THRESHOLD', 5),
-        'cooldown_seconds' => env('CB_COOLDOWN_SECONDS', 300),
+        'failure_threshold' => env('CB_FAILURE_THRESHOLD', 20),
+        'cooldown_seconds' => env('CB_COOLDOWN_SECONDS', 1),
     ],
+
     'providers' => [
-        'Eskiz' => \App\Services\Sms\Providers\EskizProvider::class,
-        'Notify' => \App\Services\Sms\Providers\NotifyProvider::class,
-        'Getsms' => \App\Services\Sms\Providers\GetsmsProvider::class,
-        'Playmobile' => \App\Services\Sms\Providers\PlaymobileProvider::class,
+        'Eskiz' => EskizProvider::class,
+        'Notify' => NotifyProvider::class,
+        'Getsms' => GetsmsProvider::class,
+        'Playmobile' => PlaymobileProvider::class,
     ],
 ];

@@ -18,19 +18,9 @@ class RabbitMQService implements MessageConsumerInterface
 
     private ?AMQPChannel $channel = null;
 
-    private string $exchangeName = 'sms.exchange';
+    private string $queue;
 
-    private array $queues = [
-        'high' => 'sms.priority.high',
-        'medium' => 'sms.priority.medium',
-        'low' => 'sms.priority.low',
-    ];
-
-    private array $bindings = [
-        'high' => 'sms.high.*',
-        'medium' => 'sms.medium.*',
-        'low' => 'sms.low.*',
-    ];
+    private int $maxPriority;
 
     private function connect(): void
     {
@@ -45,31 +35,18 @@ class RabbitMQService implements MessageConsumerInterface
 
             $this->channel = $this->connection->channel();
 
-            $this->channel->exchange_declare(
-                $this->exchangeName,
-                'topic',
+            $this->queue = config('rabbitmq.queues.main');
+            $this->maxPriority = config('rabbitmq.max_priority');
+
+            $this->channel->queue_declare(
+                $this->queue,
                 false,
                 true,
-                false
+                false,
+                false,
+                false,
+                new AMQPTable(['x-max-priority' => $this->maxPriority])
             );
-
-            foreach ($this->queues as $priority => $queue) {
-                $this->channel->queue_declare(
-                    $queue,
-                    false,
-                    true,
-                    false,
-                    false,
-                    false,
-                    new AMQPTable(['x-max-priority' => 10])
-                );
-
-                $this->channel->queue_bind(
-                    $queue,
-                    $this->exchangeName,
-                    $this->bindings[$priority]
-                );
-            }
 
         } catch (Exception $e) {
             Log::error('RabbitMQ connection failed: '.$e->getMessage());
@@ -96,7 +73,7 @@ class RabbitMQService implements MessageConsumerInterface
 
             $this->channel->basic_publish(
                 $message,
-                $this->exchangeName,
+                $this->queue,
                 $routingKey
             );
 
@@ -107,7 +84,7 @@ class RabbitMQService implements MessageConsumerInterface
         }
     }
 
-    public function consume(string $queue, callable $callback): void
+    public function consume(callable $callback): void
     {
         if (! $this->channel) {
             Log::error('RabbitMQ channel is not available');
@@ -118,19 +95,19 @@ class RabbitMQService implements MessageConsumerInterface
         try {
             $this->channel->basic_qos(0, 1, false);
             $this->channel->basic_consume(
-                $queue,
+                $this->queue,
                 '',
                 false,
                 false,
                 false,
                 false,
-                function ($message) use ($callback, $queue) {
+                function ($message) use ($callback) {
                     try {
                         $payload = json_decode($message->body, true);
-                        $callback($payload, $queue);
+                        $callback($payload, $this->queue);
                         $message->ack();
                     } catch (Exception $e) {
-                        Log::error("Failed to process message from queue [$queue]: ".$e->getMessage());
+                        Log::error("Failed to process message from queue [$this->queue]: ".$e->getMessage());
                         $message->nack();
                     }
                 }
@@ -141,7 +118,7 @@ class RabbitMQService implements MessageConsumerInterface
             }
 
         } catch (Exception $e) {
-            Log::error("Failed to consume messages from queue [$queue]: ".$e->getMessage());
+            Log::error("Failed to consume messages from queue [$this->queue]: ".$e->getMessage());
         }
     }
 
@@ -150,7 +127,7 @@ class RabbitMQService implements MessageConsumerInterface
         $this->connect();
     }
 
-    public function getInstance(): self
+    public static function getInstance(): self
     {
         if (self::$instance === null) {
             self::$instance = new self;
@@ -159,19 +136,38 @@ class RabbitMQService implements MessageConsumerInterface
         return self::$instance;
     }
 
-    public function consumeHighPriority(callable $callback): void
+    public function publishWithDelay(array $payload, int $priority = 5, int $delay = 0): void
     {
-        $this->consume($this->queues['high'], $callback);
-    }
+        if (! $this->channel) {
+            Log::error('Cannot publish with delay: RabbitMQ channel is not available.');
 
-    public function consumeMediumPriority(callable $callback): void
-    {
-        $this->consume($this->queues['medium'], $callback);
-    }
+            return;
+        }
 
-    public function consumeLowPriority(callable $callback): void
-    {
-        $this->consume($this->queues['low'], $callback);
+        try {
+            $message = new AMQPMessage(
+                json_encode($payload),
+                [
+                    'content_type' => 'application/json',
+                    'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+                    'priority' => $priority,
+                    'application_headers' => new AMQPTable([
+                        'x-delay' => $delay,
+                    ]),
+                ]
+            );
+
+            $this->channel->basic_publish(
+                $message,
+                '',
+                $this->queue,
+            );
+
+            Log::info("Published delayed message to queue [$this->queue] with delay [$delay] ms");
+
+        } catch (Exception $e) {
+            Log::error("Failed to publish delayed message to [$this->queue]: ".$e->getMessage());
+        }
     }
 
     public function close(): void

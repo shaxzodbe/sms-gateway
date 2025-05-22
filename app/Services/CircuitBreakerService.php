@@ -32,6 +32,7 @@ class CircuitBreakerService implements CircuitBreakerInterface
     {
         $failureKey = $this->getFailureKey($provider);
         $disabledKey = $this->getDisabledKey($provider);
+        Cache::add($failureKey, 0, config('sms.circuit_breaker.cooldown_seconds'));
         $failures = Cache::increment($failureKey);
         Log::warning("Circuit breaker: Failure #$failures for provider $provider");
         if ($failures >= config('sms.circuit_breaker.failure_threshold')) {

@@ -5,7 +5,7 @@ namespace App\Enums;
 enum MessageStatus: string
 {
     case PENDING = 'pending';
-    case SEND = 'sent';
+    case SENT = 'sent';
     case DELIVERED = 'delivered';
     case FAILED = 'failed';
     case RETRY = 'retry';

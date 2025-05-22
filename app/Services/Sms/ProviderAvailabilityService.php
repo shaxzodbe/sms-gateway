@@ -10,18 +10,19 @@ class ProviderAvailabilityService
 {
     public function __construct(
         protected CircuitBreakerInterface $circuitBreaker,
-        protected RateLimiterInterface    $rateLimiter,
+        protected RateLimiterInterface $rateLimiter,
     ) {}
 
     public function isAvailable(ProviderInterface $provider, string $phone): bool
     {
         $providerName = $provider->getProviderModel()->name;
-        if (!$this->circuitBreaker->canProceed($providerName)) {
+        if (! $this->circuitBreaker->canProceed($providerName)) {
             return false;
         }
-        if (!$this->rateLimiter->isAllowedForProvider($phone)) {
+        if (! $this->rateLimiter->isAllowedForProvider($providerName)) {
             return false;
         }
+
         return true;
     }
 }

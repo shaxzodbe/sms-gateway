@@ -15,8 +15,9 @@ return new class extends Migration
         Schema::create('batch_recipients', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Batch::class)->constrained()->nullOnDelete();
-            $table->string('phone');
-            $table->boolean('is_valid');
+            $table->string('phone')->index();
+            $table->boolean('is_valid')->default(true);
+            $table->json('placeholders')->nullable();
             $table->timestamps();
         });
     }
