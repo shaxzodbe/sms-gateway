@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageStatus;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EskizController extends Controller
 {
@@ -21,18 +23,16 @@ class EskizController extends Controller
                 return;
             }
 
-            $smsMessage = Message::where('external_id', $requestId)->first();
+            $smsMessage = Message::where('request_id', $requestId)->first();
 
             if (!$smsMessage) {
-                Log::warning("[Eskiz] SMS message with external_id {$requestId} not found.");
+                Log::warning("[Eskiz] SMS message with request_id {$requestId} not found.");
                 return;
             }
 
             $internalStatus = match ($status) {
-                'DELIVRD', 'DELIVERED', 'PARTDELIVERED' => History::STATUS_DELIVERED,
-                'REJECTED', 'UNDELIV', 'UNDELIVERABLE', 'EXPIRED', 'REJECTD', 'DELETED' => History::STATUS_FAILED,
-                'NEW', 'STORED', 'ACCEPTED', 'ENROUTE', 'UNKNOWN' => History::STATUS_SENT, // можно адаптировать по логике
-                default => History::STATUS_SENT,
+                'DELIVRD', 'DELIVERED', 'PARTDELIVERED' => MessageStatus::DELIVERED->value,
+                default => MessageStatus::FAILED->value,
             };
 
             $smsMessage->update([
