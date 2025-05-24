@@ -3,8 +3,8 @@
 namespace App\Services\Sms;
 
 use App\Contracts\CircuitBreakerInterface;
+use App\Contracts\ProviderInterface;
 use App\Contracts\RateLimiterInterface;
-use App\Services\Sms\Providers\Contracts\ProviderInterface;
 
 class ProviderAvailabilityService
 {

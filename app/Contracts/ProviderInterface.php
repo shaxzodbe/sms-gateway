@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Sms\Providers\Contracts;
+namespace App\Contracts;
 
 use App\Models\Provider;
 

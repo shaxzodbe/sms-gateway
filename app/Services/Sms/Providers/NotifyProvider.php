@@ -3,7 +3,7 @@
 namespace App\Services\Sms\Providers;
 
 use App\Contracts\Provider;
-use App\Services\Sms\Providers\Contracts\ProviderInterface;
+use App\Contracts\ProviderInterface;
 
 class NotifyProvider implements ProviderInterface
 {

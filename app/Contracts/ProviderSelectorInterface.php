@@ -2,8 +2,6 @@
 
 namespace App\Contracts;
 
-use App\Services\Sms\Providers\Contracts\ProviderInterface;
-
 interface ProviderSelectorInterface
 {
     public function selectProvider(string $phone, array $metadata = []): ?ProviderInterface;
