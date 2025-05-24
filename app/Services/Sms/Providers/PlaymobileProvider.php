@@ -3,7 +3,7 @@
 namespace App\Services\Sms\Providers;
 
 use App\Contracts\Provider;
-use App\Contracts\ProviderInterface;
+use App\Services\Sms\Providers\Contracts\ProviderInterface;
 
 class PlaymobileProvider implements ProviderInterface
 {

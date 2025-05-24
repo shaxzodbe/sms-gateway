@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\MessageConsumerInterface;
+use App\Services\Sms\SmsService;
 use Illuminate\Support\Facades\Log;
 
 class DispatcherService

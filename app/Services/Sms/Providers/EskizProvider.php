@@ -2,10 +2,10 @@
 
 namespace App\Services\Sms\Providers;
 
-use App\Contracts\ProviderInterface;
 use App\Enums\MessageStatus;
 use App\Models\Message;
 use App\Models\Provider;
+use App\Services\Sms\Providers\Contracts\ProviderInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;

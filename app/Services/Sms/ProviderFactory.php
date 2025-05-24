@@ -2,8 +2,8 @@
 
 namespace App\Services\Sms;
 
-use App\Contracts\ProviderInterface;
 use App\Models\Provider;
+use App\Services\Sms\Providers\Contracts\ProviderInterface;
 
 class ProviderFactory
 {
