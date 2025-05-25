@@ -7,10 +7,10 @@ use App\Contracts\MessageConsumerInterface;
 use App\Contracts\ProviderSelectorInterface;
 use App\Contracts\RateLimiterInterface;
 use App\Services\CircuitBreakerService;
-use App\Services\ProviderFactory;
-use App\Services\ProviderSelectorService;
 use App\Services\RabbitMQService;
 use App\Services\RateLimiterService;
+use App\Services\Sms\ProviderFactory;
+use App\Services\Sms\ProviderSelectorService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

@@ -15,8 +15,10 @@ class ProviderFactory
     {
         $providerClass = $this->providerMap[$provider->name] ?? null;
         if ($providerClass && is_subclass_of($providerClass, ProviderInterface::class)) {
+
             return new $providerClass($provider);
         }
+
         return null;
     }
 }

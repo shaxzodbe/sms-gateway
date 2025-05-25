@@ -1,11 +1,11 @@
 <?php
-    
-    use App\Services\Providers\EskizProvider;
-    use App\Services\Providers\GetsmsProvider;
-    use App\Services\Providers\NotifyProvider;
-    use App\Services\Providers\PlaymobileProvider;
-    
-    return [
+
+use App\Services\Sms\Providers\EskizProvider;
+use App\Services\Sms\Providers\GetsmsProvider;
+use App\Services\Sms\Providers\NotifyProvider;
+use App\Services\Sms\Providers\PlaymobileProvider;
+
+return [
     'rate_limiter' => [
         'Eskiz' => [
             'limit' => 5,

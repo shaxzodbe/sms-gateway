@@ -20,6 +20,10 @@ class Provider extends Model
         'rps_limit',
     ];
 
+    protected $casts = [
+        'is_active' => 'bool',
+    ];
+
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);

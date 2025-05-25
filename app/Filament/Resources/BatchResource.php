@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BatchResource\Pages;
-use App\Filament\Resources\BatchResource\RelationManagers;
 use App\Models\Batch;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BatchResource extends Resource
 {
@@ -23,12 +20,8 @@ class BatchResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('file_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\FileUpload::make('file_name')
+                    ->required(),
                 Forms\Components\Select::make('provider_id')
                     ->relationship('provider', 'name')
                     ->required(),

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('nickname', 20)->nullable();
             $table->unsignedTinyInteger('priority')->default(1);
-            $table->string('is_active')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->string('login', 20)->nullable();
             $table->string('password')->nullable();
             $table->text('token')->nullable();

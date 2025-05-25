@@ -18,6 +18,15 @@ class ProviderSelectorService implements ProviderSelectorInterface
 
     public function selectProvider(string $phone, array $metadata = []): ?ProviderInterface
     {
+        if (! empty($metadata['provider_id'])) {
+            $model = Provider::find($metadata['provider_id']);
+            if ($model && $model->is_active) {
+                return $this->providerFactory->make($model);
+            }
+
+            Log::warning("Requested provider_id={$metadata['provider_id']} is not available.");
+            return null;
+        }
         $providers = Provider::query()
             ->where('is_active', true)
             ->orderByDesc('priority')

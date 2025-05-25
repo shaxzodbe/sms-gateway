@@ -34,4 +34,37 @@ class SmsService
 
         return false;
     }
+
+    public function sendBatch(array $messages, array $metadata = []): bool
+    {
+        $provider = $this->providerSelector->selectProvider($messages[0]['phone'], $metadata);
+
+        if (! $provider) {
+            Log::error("No provider selected for batch send (provider_id: {$metadata['provider_id']})");
+
+            return false;
+        }
+
+        try {
+            $success = $provider->sendBatch($messages, $metadata);
+
+            foreach ($messages as $msg) {
+                if ($success) {
+                    $this->providerSelector->handleSuccess($provider, $msg['type'] ?? 'general', $msg['source'] ?? 'default');
+                } else {
+                    $this->providerSelector->handleFailure($provider, $msg['uuid'] ?? null, $msg['type'] ?? 'general', $msg['source'] ?? 'default');
+                }
+            }
+
+            return $success;
+        } catch (\Throwable $e) {
+            Log::error('Batch send failed: '.$e->getMessage());
+
+            foreach ($messages as $msg) {
+                $this->providerSelector->handleFailure($provider, $msg['uuid'] ?? null, $msg['type'] ?? 'general', $msg['source'] ?? 'default');
+            }
+
+            return false;
+        }
+    }
 }
