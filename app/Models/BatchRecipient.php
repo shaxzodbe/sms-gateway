@@ -11,6 +11,7 @@ class BatchRecipient extends Model
         'batch_id',
         'phone',
         'is_valid',
+        'placeholders',
     ];
 
     public function batch(): BelongsTo
