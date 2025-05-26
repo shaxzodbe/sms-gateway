@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BatchResource\Pages;
 
+use App\Contracts\PhoneValidatorInterface;
 use App\Filament\Resources\BatchResource;
 use App\Models\BatchRecipient;
 use Filament\Resources\Pages\CreateRecord;
@@ -21,7 +22,7 @@ class CreateBatch extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $record = $this->record; // созданный Batch
+        $record = $this->record;
 
         if (! $record->file_name) {
             return;
@@ -54,7 +55,7 @@ class CreateBatch extends CreateRecord
             }
         }
 
-        $validator = app(\App\Contracts\PhoneValidatorInterface::class);
+        $validator = app(PhoneValidatorInterface::class);
         foreach ($phones as $phone) {
             BatchRecipient::create([
                 'phone' => $phone,
