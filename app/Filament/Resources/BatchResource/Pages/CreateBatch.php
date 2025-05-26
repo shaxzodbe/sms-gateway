@@ -34,7 +34,7 @@ class CreateBatch extends CreateRecord
         $phones = [];
 
         if (in_array($extension, ['csv'])) {
-            $rows = array_map('str_getcsv', file($path));
+            $rows = array_slice(array_map('str_getcsv', file($path)), 1);
             foreach ($rows as $row) {
                 $phone = trim($row[0] ?? '');
                 if ($phone) {
@@ -46,7 +46,7 @@ class CreateBatch extends CreateRecord
             $sheet = $spreadsheet->getActiveSheet();
 
             foreach ($sheet->getRowIterator() as $row) {
-                $cell = $row->getCellIterator()->current();
+                $cell = $row->getCellIterator('A', 'A')->current();
                 $phone = trim((string) $cell->getValue());
 
                 if ($phone) {
@@ -55,13 +55,26 @@ class CreateBatch extends CreateRecord
             }
         }
 
+        $now = now();
+        $batchData = [];
+
         $validator = app(PhoneValidatorInterface::class);
         foreach ($phones as $phone) {
-            BatchRecipient::create([
+            $batchData[] = [
                 'phone' => $phone,
                 'batch_id' => $record->id,
                 'is_valid' => $validator->isValidPhone($phone),
-            ]);
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            if (count($batchData) >= 1000) {
+                BatchRecipient::insert($batchData);
+                $batchData = [];
+            }
+        }
+
+        if (count($batchData) > 0) {
+            BatchRecipient::insert($batchData);
         }
     }
 }
