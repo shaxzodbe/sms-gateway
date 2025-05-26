@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\BatchRecipientResource\RelationManagers\RecipientsRelationManager;
 use App\Filament\Resources\BatchResource\Pages;
 use App\Models\Batch;
 use Filament\Forms;
@@ -70,7 +71,7 @@ class BatchResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RecipientsRelationManager::class,
         ];
     }
 
