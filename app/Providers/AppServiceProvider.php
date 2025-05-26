@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Contracts\CircuitBreakerInterface;
 use App\Contracts\MessageConsumerInterface;
+use App\Contracts\PhoneValidatorInterface;
 use App\Contracts\ProviderSelectorInterface;
 use App\Contracts\RateLimiterInterface;
 use App\Services\CircuitBreakerService;
+use App\Services\PhoneValidatorService;
 use App\Services\RabbitMQService;
 use App\Services\RateLimiterService;
 use App\Services\Sms\ProviderFactory;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ProviderFactory::class, function ($app) {
             return new ProviderFactory(config('sms.providers'));
         });
+        $this->app->bind(PhoneValidatorInterface::class, PhoneValidatorService::class);
         $this->app->bind(MessageConsumerInterface::class, RabbitMQService::class);
         $this->app->bind(ProviderSelectorInterface::class, ProviderSelectorService::class);
         $this->app->bind(CircuitBreakerInterface::class, CircuitBreakerService::class);
