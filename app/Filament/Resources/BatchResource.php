@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class BatchResource extends Resource
 {
@@ -63,7 +65,15 @@ class BatchResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->action(function (Collection $records) {
+                            DB::transaction(function () use ($records) {
+                                foreach ($records as $record) {
+                                    DB::table('batch_recipients')->where('batch_id', $record->id)->delete();
+                                    $record->delete();
+                                }
+                            });
+                        }),
                 ]),
             ]);
     }

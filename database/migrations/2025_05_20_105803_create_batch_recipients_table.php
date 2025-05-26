@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('batch_recipients', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('batch_id')->nullable()->index();
+            $table->foreignId('batch_id')->references('id')->on('batches')->onDelete('cascade');
             $table->string('phone')->index();
             $table->boolean('is_valid')->default(true);
             $table->json('placeholders')->nullable();
