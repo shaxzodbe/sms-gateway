@@ -25,28 +25,26 @@ class BatchResource extends Resource
             ->schema([
                 Forms\Components\FileUpload::make('file_name')
                     ->required(),
+                Forms\Components\Textarea::make('message')
+                    ->required(),
                 Forms\Components\Select::make('provider_id')
                     ->relationship('provider', 'name')
                     ->required(),
                 Forms\Components\Select::make('template_id')
                     ->relationship('template', 'name'),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('file_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('file_name'),
+                Tables\Columns\TextColumn::make('user.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('provider.name')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('template.name')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
