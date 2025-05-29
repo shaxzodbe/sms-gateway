@@ -68,13 +68,16 @@ class RabbitMQService implements MessageConsumerInterface
                     'content_type' => 'application/json',
                     'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
                     'priority' => $priority,
+                    'headers' => new AMQPTable([
+                        'x-delay' => 0,
+                    ]),
                 ]
             );
 
             $this->channel->basic_publish(
                 $message,
+                '',
                 $this->queue,
-                $routingKey
             );
 
             Log::info("Published message to [$routingKey] with priority [$priority]");
@@ -151,7 +154,7 @@ class RabbitMQService implements MessageConsumerInterface
                     'content_type' => 'application/json',
                     'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
                     'priority' => $priority,
-                    'application_headers' => new AMQPTable([
+                    'headers' => new AMQPTable([
                         'x-delay' => $delay,
                     ]),
                 ]
