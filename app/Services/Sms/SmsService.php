@@ -37,7 +37,7 @@ class SmsService
 
     public function sendBatch(array $messages, array $metadata = []): bool
     {
-        $provider = $this->providerSelector->selectProvider($messages[0]['phone'], $metadata);
+        $provider = $this->providerSelector->selectProvider('shouldReturnProvider', $metadata);
 
         if (! $provider) {
             Log::error("No provider selected for batch send (provider_id: {$metadata['provider_id']})");
