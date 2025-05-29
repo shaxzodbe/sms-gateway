@@ -10,6 +10,7 @@ class Batch extends Model
 {
     protected $fillable = [
         'file_name',
+        'message',
         'provider_id',
         'template_id',
         'created_by',

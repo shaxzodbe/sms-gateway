@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('batches', function (Blueprint $table) {
             $table->id();
             $table->string('file_name');
+            $table->string('message');
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->foreignIdFor(Provider::class)->constrained()->nullOnDelete();
             $table->foreignIdFor(Template::class)->nullable()->constrained()->nullOnDelete();
