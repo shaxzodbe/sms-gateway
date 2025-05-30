@@ -12,7 +12,7 @@ class RateLimiterService implements RateLimiterInterface
         $key = "rate_limit:provider:$provider";
         $maxAttempts = config("sms.rate_limiter.$provider.limit", 5);
         $decaySeconds = config("sms.rate_limiter.$provider.window", 1);
-        
+
         return RateLimiter::attempt($key, $maxAttempts, fn () => true, $decaySeconds);
     }
 }
