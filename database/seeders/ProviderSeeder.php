@@ -18,6 +18,8 @@ class ProviderSeeder extends Seeder
                 'password' => 'sVPZVbuGKAD2FE8uFMyRG6GQVJoAVzaWr4NjR1f1',
                 'token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDk4ODM5ODAsImlhdCI6MTc0NzI5MTk4MCwicm9sZSI6InVzZXIiLCJzaWduIjoiOTY2OTgyMDZjOTJlNDJkNGI3MzI5MjRlN2MwYzkwY2Y4ODQ4MGUwYzM3MmY3NjQzMzU0ZjRmMWQ4MWM4Y2Q3NSIsInN1YiI6IjM2OTgifQ.gOa8ddmXjQL0v9GbcHopSVrYD5QoErHC_gmmG-k-x5Q',
                 'endpoint' => 'https://notify.eskiz.uz/api/message/sms',
+                'batch_size' => 200,
+                'rps_limit' => 5,
             ],
             [
                 'name' => 'Getsms',
@@ -28,6 +30,8 @@ class ProviderSeeder extends Seeder
                 'endpoint' => 'http://185.8.212.184/smsgateway/',
                 'token' => 'c5j9_eucmEkWacThExtgCVbT',
                 'nickname' => 'texnomart',
+                'batch_size' => 200,
+                'rps_limit' => 5,
             ],
             [
                 'name' => 'Playmobile',
@@ -36,6 +40,8 @@ class ProviderSeeder extends Seeder
                 'login' => 'texnomart',
                 'password' => 'TK]-kVk1aBi@',
                 'endpoint' => 'https://send.smsxabar.uz',
+                'batch_size' => 200,
+                'rps_limit' => 5,
             ],
             [
                 'name' => 'Notify',
@@ -45,6 +51,8 @@ class ProviderSeeder extends Seeder
                 'password' => 'adminner1337',
                 'token' => 'c5j9_eucmEkWacThExtgCVbT',
                 'endpoint' => 'https://notify.gov.uz/api/web/rest/send-bulk-sms',
+                'batch_size' => 200,
+                'rps_limit' => 5,
             ],
         ];
 
