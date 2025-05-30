@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\MassDispatchTimeValidatorInterface;
 use App\Contracts\MessageConsumerInterface;
 use App\Services\Sms\SmsService;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +11,8 @@ class DispatcherService
 {
     public function __construct(
         protected MessageConsumerInterface $consumer,
-        protected SmsService $smsService
+        protected SmsService $smsService,
+        protected MassDispatchTimeValidatorInterface $timeValidator
     ) {}
 
     protected function handleSingle(array $msg): void
@@ -40,6 +42,26 @@ class DispatcherService
 
         if (empty($messages) || ! is_array($messages)) {
             Log::warning('Invalid batch SMS payload: '.json_encode($msg));
+
+            return;
+        }
+
+        if (! $this->timeValidator->isWithinAllowedTime()) {
+            $delaySeconds = $this->timeValidator->nextAllowedTimestamp() - time();
+
+            RabbitMQService::getInstance()->publishWithDelay(
+                [
+                    'messages' => $messages,
+                    'metadata' => array_merge($metadata, [
+                        'retry_attempts' => $attempts + 1,
+                        'timestamp' => time(),
+                    ]),
+                ],
+                $priority === 'high' ? 10 : ($priority === 'medium' ? 5 : 1),
+                $delaySeconds * 1000
+            );
+
+            Log::info("Batch SMS deferred for {$delaySeconds}s due to time constraints");
 
             return;
         }
